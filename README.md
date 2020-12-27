@@ -480,11 +480,13 @@ D|X���]B�I▒�E �E(�D0�H8�G@j8A0A(B B▒B�p���P7
                                                                 �s ▒0@7▒@@�>Rq▒0@~ �▒8@� ��]�H@wp+�@@�U3��▒@@� ▒"crtstuff.cderegister_tm_clones__do_global_dtors_auxcompleted.0__do_global_dtors_aux_fini_array_entryframe_dummy__frame_dummy_init_array_entrydocker-security.c__FRAME_END____init_array_end_DYNAMIC__init_array_start__GNU_EH_FRAME_HDR_GLOBAL_OFFSET_TABLE___libc_csu_fini_ITM_deregisterTMCloneTable_edatasystem@@GLIBC_2.2.5__libc_start_main@@GLIBC_2.2.5__data_start__gmon_start____dso_handle_IO_stdin_used__libc_csu_init__bss_startmainsetgid@@GLIBC_2.2.5__TMC_END___ITM_registerTMCloneTablesetuid@@GLIBC_2.2.5__cxa_finalize@@GLIBC_2.2.5.symtab.strtab.shstrtab.interp.note.gnu.build-id.note.ABI-tag.gnu.hash.dynsym.dynstr.gnu.version.gnu.version_r.rela.dyn.rela.plt.init.plt.got.text.fini.rodata.eh_frame_hdr.eh_frame.init_array.fini_array.dynamic.got.plt.data.bss.comment�#��$6�� D��No
                                                                                                                                                                                             00�^���o��k���o��z��▒�B��▒��  @�pp����      �  �H H <�� ������=�-��?��@�0@0@@@�0@0`00▒ �64�8
 ```
-chmod without full path /usr/bin/chmod, we can elevate priviledges with that
+chmod without full path /usr/bin/chmod, we can elevate privileges with that
 
 ### tool pspy64
 [PSPY64](https://github.com/DominicBreuker/pspy)
 (sent with scp)
+
+
 in one shell:
 ```
 dexter@laboratory:~$ ./pspy64 
